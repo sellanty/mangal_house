@@ -1,6 +1,5 @@
 import AdminJS from 'adminjs';
 import AdminJSExpress from '@adminjs/express';
-import sequelize from '../config/database';
 const { Database, Resource } = require('@adminjs/sequelize');
 import MenuItem from '../models/menuItem';
 import Order from '../models/order';
