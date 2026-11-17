@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import * as jwt from "jsonwebtoken";
-
+import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import {
   RegisterRequest,
@@ -42,16 +41,9 @@ export const register = async (
   res: Response<AuthResponse>
 ) => {
   try {
-    console.log("1 REGISTER START");
-    console.log("2 BODY:", req.body);
-
     const { phone, name, address, password } = req.body;
 
-    console.log("3 FIELDS PARSED");
-
     if (!phone || !name || !password) {
-      console.log("4 VALIDATION FAILED");
-
       return res.status(400).json({
         success: false,
         message: "Телефон, имя и пароль обязательны",
@@ -59,8 +51,6 @@ export const register = async (
     }
 
     if (password.length < 6) {
-      console.log("5 PASSWORD TOO SHORT");
-
       return res.status(400).json({
         success: false,
         message: "Пароль должен быть минимум 6 символов",
@@ -69,30 +59,18 @@ export const register = async (
 
     const normalizedPhone = phone.trim();
 
-    console.log("6 BEFORE FIND USER");
-
     const existingUser = await User.findOne({
       where: { phone: normalizedPhone },
     });
 
-    console.log("7 AFTER FIND USER");
-
     if (existingUser) {
-      console.log("8 USER EXISTS");
-
       return res.status(409).json({
         success: false,
         message: "Пользователь с таким телефоном уже существует",
       });
     }
 
-    console.log("9 BEFORE HASH");
-
     const passwordHash = await bcrypt.hash(password, 10);
-
-    console.log("10 AFTER HASH");
-
-    console.log("11 BEFORE CREATE USER");
 
     const user = await User.create({
       phone: normalizedPhone,
@@ -101,13 +79,7 @@ export const register = async (
       passwordHash,
     });
 
-    console.log("12 USER CREATED");
-
-    console.log("13 BEFORE TOKEN");
-
     const token = createToken(user);
-
-    console.log("14 TOKEN CREATED");
 
     return res.status(201).json({
       success: true,
@@ -171,6 +143,33 @@ export const login = async (
     });
   } catch (error) {
     console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Ошибка сервера",
+    });
+  }
+};
+
+export const getMe = async (_req: Request, res: Response) => {
+  try {
+    const userId = res.locals.userId as number;
+
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Пользователь не найден",
+      });
+    }
+
+    return res.json({
+      success: true,
+      user: toAuthUser(user),
+    });
+  } catch (error) {
+    console.error("GET ME ERROR:", error);
 
     return res.status(500).json({
       success: false,
