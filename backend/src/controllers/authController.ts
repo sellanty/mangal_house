@@ -16,6 +16,8 @@ const createToken = (user: User) => {
     throw new Error("JWT_SECRET не настроен на сервере");
   }
 
+  const tokenLifetime = 7 * 24 * 60 * 60;
+
   return jwt.sign(
     {
       userId: user.id,
@@ -23,7 +25,7 @@ const createToken = (user: User) => {
     },
     jwtSecret,
     {
-      expiresIn: process.env.JWT_EXPIRES_IN || "7d",
+      expiresIn: tokenLifetime,
     }
   );
 };
