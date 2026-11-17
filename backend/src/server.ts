@@ -2,11 +2,11 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
-import sequelize from "./config/database";
-import orderRoutes from "./routes/orderRoutes";
-import menuRoutes from "./routes/menuRoutes";
-import { adminRouter } from "./admin/admin";
-import authRoutes from "./routes/authRoutes";
+import sequelize from "./config/database.js";
+import orderRoutes from "./routes/orderRoutes.js";
+import menuRoutes from "./routes/menuRoutes.js";
+import { adminRouter } from "./admin/admin.js";
+import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
 

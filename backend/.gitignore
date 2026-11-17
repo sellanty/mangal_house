@@ -11,3 +11,4 @@ dist/
 backend/dist/
 
 .git/
+/.adminjs/

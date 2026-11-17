@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import Order from "../models/order";
+import Order from "../models/order.js";
 import { Op } from "sequelize";
-import MenuItem from "../models/menuItem";
+import MenuItem from "../models/menuItem.js";
 import { 
   IncomingOrderItem, 
   OrderItemSnapshot, 
   CreateOrderRequest 
-} from '../types/order.types';
+} from '../types/order.types.js';
 
 
 export const createOrder = async (req: Request, res: Response) => {

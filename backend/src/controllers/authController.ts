@@ -2,12 +2,12 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 
-import User from "../models/user";
+import User from "../models/user.js";
 import {
   RegisterRequest,
   LoginRequest,
   AuthResponse,
-} from "../types/auth.types";
+} from "../types/auth.types.js";
 
 const createToken = (user: User) => {
   const jwtSecret = process.env.JWT_SECRET;

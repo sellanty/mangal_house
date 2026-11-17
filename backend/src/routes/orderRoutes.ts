@@ -5,8 +5,8 @@ import {
   getAllOrders,
   getOrderById,
   updateOrderStatus,
-} from "../controllers/orderController";
-import { requireAdminApiKey } from "../middlewares/adminApiKey";
+} from "../controllers/orderController.js";
+import { requireAdminApiKey } from "../middlewares/adminApiKey.js";
 
 const router = Router();
 
