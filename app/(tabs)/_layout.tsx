@@ -6,8 +6,8 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#EA580C", // Оранжевый для ресторана
-        tabBarInactiveTintColor: "#6B7280", // Серый для неактивных
+        tabBarActiveTintColor: "#EA580C",
+        tabBarInactiveTintColor: "#6B7280",
         tabBarStyle: {
           backgroundColor: "#FFFFFF",
           borderTopWidth: 1,
@@ -27,7 +27,11 @@ export default function TabsLayout() {
         options={{
           title: "Меню",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="restaurant-outline" size={size} color={color} />
+            <Ionicons
+              name="restaurant-outline"
+              size={size}
+              color={typeof color === "number" ? undefined : (color ?? undefined)}
+            />
           ),
         }}
       />
@@ -37,7 +41,11 @@ export default function TabsLayout() {
         options={{
           title: "Поиск",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="search-outline" size={size} color={color} />
+            <Ionicons
+              name="search-outline"
+              size={size}
+              color={typeof color === "number" ? undefined : (color ?? undefined)}
+            />
           ),
         }}
       />
@@ -47,19 +55,27 @@ export default function TabsLayout() {
         options={{
           title: "Корзина",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="cart-outline" size={size} color={color} />
+            <Ionicons
+              name="cart-outline"
+              size={size}
+              color={typeof color === "number" ? undefined : (color ?? undefined)}
+            />
           ),
         }}
       />
 
       <Tabs.Screen
-      name="other"
-      options={{
-        title: "Ещё",
-        tabBarIcon: ({color, size}) => (
-          <Ionicons name="add-circle-outline" size={size} color={color}/>
-        ),
-      }}
+        name="other"
+        options={{
+          title: "Ещё",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons
+              name="add-circle-outline"
+              size={size}
+              color={typeof color === "number" ? undefined : (color ?? undefined)}
+            />
+          ),
+        }}
       />
     </Tabs>
   );
