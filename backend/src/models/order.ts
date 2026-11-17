@@ -1,24 +1,24 @@
 import { DataTypes, Model } from "sequelize";
-import sequelize from "../config/database";
+import sequelize from "../config/database.js";
 import {
   OrderStatus,
   OrderAttributes,
   OrderCreationAttributes,
-} from "../types/order.types";
+} from "../types/order.types.js";
 
 class Order
   extends Model<OrderAttributes, OrderCreationAttributes>
   implements OrderAttributes
 {
-  public id!: number;
-  public customerName!: string;
-  public customerPhone!: string;
-  public customerAddress!: string;
-  public items!: any;
-  public totalAmount!: number;
-  public status!: OrderStatus;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare id: number;
+  declare customerName: string;
+  declare customerPhone: string;
+  declare customerAddress: string;
+  declare items: any;
+  declare totalAmount: number;
+  declare status: OrderStatus;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 }
 
 Order.init(

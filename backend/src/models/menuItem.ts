@@ -1,26 +1,28 @@
 import { DataTypes, Model } from "sequelize";
-import sequelize from "../config/database";
+import sequelize from "../config/database.js";
 import {
   MenuItemAttributes,
   MenuItemCreationAttributes,
-} from "../types/menuItem.types";
+} from "../types/menuItem.types.js";
+
 
 class MenuItem
   extends Model<MenuItemAttributes, MenuItemCreationAttributes>
   implements MenuItemAttributes
 {
-  public id!: number;
-  public name!: string;
-  public price!: number;
-  public description!: string;
-  public ingredients!: string;
-  public category!: string;
-  public emoji!: string;
-  public popular!: boolean;
-  public available!: boolean;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare id: number;
+  declare name: string;
+  declare price: number;
+  declare description: string;
+  declare ingredients: string;
+  declare category: string;
+  declare emoji: string;
+  declare popular: boolean;
+  declare available: boolean;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 }
+
 
 MenuItem.init(
   {

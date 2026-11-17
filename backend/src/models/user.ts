@@ -1,18 +1,18 @@
 import { DataTypes, Model } from "sequelize";
-import sequelize from "../config/database";
-import { UserAttributes, UserCreationAttributes } from "../types/user.types";
+import sequelize from "../config/database.js";
+import { UserAttributes, UserCreationAttributes } from "../types/user.types.js";
 
 class User
   extends Model<UserAttributes, UserCreationAttributes>
   implements UserAttributes
 {
-  public id!: number;
-  public phone!: string;
-  public name!: string;
-  public address!: string;
-  public passwordHash!: string;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare id: number;
+  declare phone: string;
+  declare name: string;
+  declare address: string;
+  declare passwordHash: string;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 }
 
 User.init(
