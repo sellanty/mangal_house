@@ -1,31 +1,57 @@
-import api, { API_ORIGIN } from "./api";
-import { AuthResponse } from "../types/auth.types";
+
+import axios from "axios";
+import api from "./api";
+import type { AuthResponse } from "../types/auth.types";
+
+type ApiError = {
+  message?: string;
+  error?: string;
+};
+
+function getErrorMessage(
+  error: unknown,
+  fallback: string
+): string {
+  if (axios.isAxiosError<ApiError>(error)) {
+    const message =
+      error.response?.data?.message ??
+      error.response?.data?.error;
+
+    if (typeof message === "string") {
+      return message;
+    }
+
+    if (!error.response) {
+      return "Не удалось подключиться к серверу. Проверь backend и адрес API.";
+    }
+  }
+
+  return fallback;
+}
 
 export const login = async (
   phone: string,
   password: string
 ): Promise<AuthResponse> => {
   try {
-    const response = await api.post("/auth/login", {
-      phone,
-      password,
-    });
+    const { data } = await api.post<AuthResponse>(
+      "/auth/login",
+      {
+        phone: phone.trim(),
+        password,
+      }
+    );
 
-    return response.data;
-  } catch (error: any) {
-    console.error("Login API error:", {
-      message: error.message,
-      code: error.code,
-      baseURL: error.config?.baseURL,
-      url: error.config?.url,
-      method: error.config?.method,
-      responseStatus: error.response?.status,
-      responseData: error.response?.data,
-    });
+    return data;
+  } catch (error: unknown) {
+    console.error(
+      "Login API error:",
+      getErrorMessage(error, "Ошибка входа")
+    );
 
     return {
       success: false,
-      message: error.response?.data?.message || "Ошибка входа",
+      message: getErrorMessage(error, "Ошибка входа"),
     };
   }
 };
@@ -37,40 +63,26 @@ export const register = async (
   password: string
 ): Promise<AuthResponse> => {
   try {
-    console.log("API_ORIGIN:", API_ORIGIN);
+    const { data } = await api.post<AuthResponse>(
+      "/auth/register",
+      {
+        phone: phone.trim(),
+        name: name.trim(),
+        address: address.trim(),
+        password,
+      }
+    );
 
-    console.log("HEALTH CHECK START");
-
-    const healthResponse = await api.get("/health");
-
-    console.log("HEALTH CHECK RESPONSE:", healthResponse.data);
-
-    console.log("REGISTER START");
-
-    const response = await api.post("/auth/register", {
-      phone,
-      name,
-      address,
-      password,
-    });
-
-    console.log("REGISTER RESPONSE:", response.data);
-
-    return response.data;
-  } catch (error: any) {
-    console.error("Register API error:", {
-      message: error.message,
-      code: error.code,
-      baseURL: error.config?.baseURL,
-      url: error.config?.url,
-      method: error.config?.method,
-      responseStatus: error.response?.status,
-      responseData: error.response?.data,
-    });
+    return data;
+  } catch (error: unknown) {
+    console.error(
+      "Register API error:",
+      getErrorMessage(error, "Ошибка регистрации")
+    );
 
     return {
       success: false,
-      message: error.response?.data?.message || "Ошибка регистрации",
+      message: getErrorMessage(error, "Ошибка регистрации"),
     };
   }
 };

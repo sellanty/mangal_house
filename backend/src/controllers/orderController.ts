@@ -1,21 +1,31 @@
 import { Request, Response } from "express";
 import Order from "../models/order.js";
+import User from "../models/user.js";
 import { Op } from "sequelize";
 import MenuItem from "../models/menuItem.js";
-import { 
-  IncomingOrderItem, 
-  OrderItemSnapshot, 
-  CreateOrderRequest 
-} from '../types/order.types.js';
-
+import {
+  IncomingOrderItem,
+  OrderItemSnapshot,
+  CreateOrderRequest,
+} from "../types/order.types.js";
 
 export const createOrder = async (req: Request, res: Response) => {
   try {
-    const { customerName, customerPhone, customerAddress, items } = req.body;
+    const userId = res.locals.userId as number;
 
-    if (!customerName || !customerPhone || !customerAddress) {
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(401).json({
+        error: "Пользователь не найден",
+      });
+    }
+
+    const { customerAddress, items } = req.body ?? {};
+
+    if (typeof customerAddress !== "string" || !customerAddress.trim()) {
       return res.status(400).json({
-        error: "Имя, телефон и адрес обязательны",
+        error: "Адрес доставки обязателен",
       });
     }
 
@@ -96,9 +106,10 @@ export const createOrder = async (req: Request, res: Response) => {
     }, 0);
 
     const order = await Order.create({
-      customerName,
-      customerPhone,
-      customerAddress,
+      userId,
+      customerName: user.name,
+      customerPhone: user.phone,
+      customerAddress: customerAddress.trim(),
       items: orderItems,
       totalAmount,
       status: "new",
@@ -110,6 +121,25 @@ export const createOrder = async (req: Request, res: Response) => {
       error instanceof Error ? error.message : "Неизвестная ошибка";
 
     res.status(500).json({ error: message });
+  }
+};
+
+export const getMyOrders = async (_req: Request, res: Response) => {
+  try {
+    const userId = res.locals.userId as number;
+
+    const orders = await Order.findAll({
+      where: { userId },
+      order: [["createdAt", "DESC"]],
+    });
+
+    return res.json(orders);
+  } catch (error) {
+    console.error("GET MY ORDERS ERROR:", error);
+
+    return res.status(500).json({
+      error: "Ошибка при получении заказов",
+    });
   }
 };
 

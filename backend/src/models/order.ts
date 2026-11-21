@@ -17,6 +17,7 @@ class Order
   declare items: any;
   declare totalAmount: number;
   declare status: OrderStatus;
+  declare userId: number | null;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
@@ -61,6 +62,16 @@ Order.init(
         "cancelled"
       ),
       defaultValue: "new",
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+      onUpdate: "CASCADE",
+      onDelete: "SET NULL",
     },
   },
   {

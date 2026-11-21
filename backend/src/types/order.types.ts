@@ -15,6 +15,7 @@ export interface OrderAttributes {
   items: any;
   totalAmount: number;
   status: OrderStatus;
+  userId: number | null;
   createdAt?: Date;
   updatedAt?: Date;
 }

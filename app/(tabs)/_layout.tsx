@@ -1,24 +1,38 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
+import { BRAND } from "@/constants/brand";
+import { useCart } from "@/contexts/CartContext";
+
 export default function TabsLayout() {
+  const { totalItems } = useCart();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#EA580C",
-        tabBarInactiveTintColor: "#6B7280",
+
+        tabBarActiveTintColor: BRAND.accent,
+        tabBarInactiveTintColor: BRAND.muted,
+
         tabBarStyle: {
-          backgroundColor: "#FFFFFF",
+          backgroundColor: BRAND.white,
           borderTopWidth: 1,
-          borderTopColor: "#E5E7EB",
-          height: 80,
+          borderTopColor: BRAND.border,
+          height: 74,
+          paddingTop: 9,
           paddingBottom: 10,
-          paddingTop: 8,
         },
+
         tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: "500",
+          fontSize: 11,
+          fontWeight: "600",
+        },
+
+        tabBarBadgeStyle: {
+          backgroundColor: BRAND.accent,
+          color: BRAND.white,
+          fontSize: 10,
         },
       }}
     >
@@ -26,11 +40,11 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: "Меню",
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ focused, size }) => (
             <Ionicons
               name="restaurant-outline"
               size={size}
-              color={typeof color === "number" ? undefined : (color ?? undefined)}
+              color={focused ? BRAND.accent : BRAND.muted}
             />
           ),
         }}
@@ -40,11 +54,11 @@ export default function TabsLayout() {
         name="explore"
         options={{
           title: "Поиск",
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ focused, size }) => (
             <Ionicons
               name="search-outline"
               size={size}
-              color={typeof color === "number" ? undefined : (color ?? undefined)}
+              color={focused ? BRAND.accent : BRAND.muted}
             />
           ),
         }}
@@ -54,11 +68,18 @@ export default function TabsLayout() {
         name="basket"
         options={{
           title: "Корзина",
-          tabBarIcon: ({ color, size }) => (
+          tabBarBadge:
+            totalItems > 0
+              ? totalItems > 99
+                ? "99+"
+                : totalItems
+              : undefined,
+
+          tabBarIcon: ({ focused, size }) => (
             <Ionicons
-              name="cart-outline"
+              name="bag-handle-outline"
               size={size}
-              color={typeof color === "number" ? undefined : (color ?? undefined)}
+              color={focused ? BRAND.accent : BRAND.muted}
             />
           ),
         }}
@@ -67,12 +88,12 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="other"
         options={{
-          title: "Ещё",
-          tabBarIcon: ({ color, size }) => (
+          title: "Профиль",
+          tabBarIcon: ({ focused, size }) => (
             <Ionicons
-              name="add-circle-outline"
+              name="person-outline"
               size={size}
-              color={typeof color === "number" ? undefined : (color ?? undefined)}
+              color={focused ? BRAND.accent : BRAND.muted}
             />
           ),
         }}

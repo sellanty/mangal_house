@@ -1,36 +1,69 @@
-import api from './api';
-import { OrderData, OrderResponse } from '@/types/order.types';
-import { ApiResponse } from '@/types/api.types';
+
+import axios from "axios";
+import api from "./api";
+
+import type {
+  OrderData,
+  OrderResponse,
+} from "@/types/order.types";
+
+import type { ApiResponse } from "@/types/api.types";
+
+type ErrorResponse = {
+  error?: string;
+  message?: string;
+};
 
 export const createOrder = async (
   orderData: OrderData
 ): Promise<ApiResponse> => {
   try {
-    const response = await api.post<OrderResponse>("/orders", orderData);
+    const response = await api.post<OrderResponse>(
+      "/orders",
+      orderData
+    );
 
-    return { success: true, order: response.data };
-  } catch (error) {
-    console.log("API error", error);
-    return { success: false, error: "Не удалось создать заказ" };
+    return {
+      success: true,
+      order: response.data,
+    };
+  } catch (error: unknown) {
+    if (axios.isAxiosError<ErrorResponse>(error)) {
+      if (error.response?.status === 401) {
+        return {
+          success: false,
+          error: "Сессия истекла. Войдите в аккаунт снова.",
+        };
+      }
+
+      const serverMessage =
+        error.response?.data?.error ??
+        error.response?.data?.message;
+
+      if (typeof serverMessage === "string") {
+        return {
+          success: false,
+          error: serverMessage,
+        };
+      }
+
+      if (!error.response) {
+        return {
+          success: false,
+          error: "Нет связи с сервером. Проверь интернет и backend.",
+        };
+      }
+    }
+
+    return {
+      success: false,
+      error: "Не удалось оформить заказ",
+    };
   }
 };
 
-export const getOrders = async (): Promise<OrderResponse[]> => {
-  const response = await api.get<OrderResponse[]>("/orders");
-  return response.data;
-};
+export const getMyOrders = async (): Promise<OrderResponse[]> => {
+  const response = await api.get<OrderResponse[]>("/orders/my");
 
-export const getOrderById = async (id: number): Promise<OrderResponse> => {
-  const response = await api.get<OrderResponse>(`/orders/${id}`);
-  return response.data;
-};
-
-export const updateOrderStatus = async (
-  id: number,
-  status: "new" | "cooking" | "delivering" | "completed" | "cancelled"
-): Promise<OrderResponse> => {
-  const response = await api.put<OrderResponse>(`/orders/${id}/status`, {
-    status,
-  });
   return response.data;
 };

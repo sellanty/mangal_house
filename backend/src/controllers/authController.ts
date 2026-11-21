@@ -177,3 +177,70 @@ export const getMe = async (_req: Request, res: Response) => {
     });
   }
 };
+
+
+type UpdateProfileBody = {
+  name?: unknown;
+  address?: unknown;
+};
+
+export const updateMe = async (
+  req: Request<{}, {}, UpdateProfileBody>,
+  res: Response
+) => {
+  try {
+    const userId = res.locals.userId as number;
+    const { name, address } = req.body ?? {};
+
+    if (typeof name !== "string" || typeof address !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "Имя и адрес должны быть строками",
+      });
+    }
+
+    const cleanName = name.trim();
+    const cleanAddress = address.trim();
+
+    if (cleanName.length < 2 || cleanName.length > 60) {
+      return res.status(400).json({
+        success: false,
+        message: "Имя должно содержать от 2 до 60 символов",
+      });
+    }
+
+    if (cleanAddress.length > 250) {
+      return res.status(400).json({
+        success: false,
+        message: "Адрес не должен превышать 250 символов",
+      });
+    }
+
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Пользователь не найден",
+      });
+    }
+
+    await user.update({
+      name: cleanName,
+      address: cleanAddress,
+    });
+
+    return res.json({
+      success: true,
+      user: toAuthUser(user),
+      message: "Профиль обновлён",
+    });
+  } catch (error) {
+    console.error("UPDATE PROFILE ERROR:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Не удалось обновить профиль",
+    });
+  }
+};
